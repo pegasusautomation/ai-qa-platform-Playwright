@@ -1,0 +1,34 @@
+{
+  "name": "ai-qa-platform",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test tests/ui",
+    "test:api": "playwright test tests/api",
+    "test:ai": "playwright test tests/api/ai-quality.spec.ts",
+    "test:security": "playwright test tests/api/ai-security.spec.ts",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report",
+    "typecheck": "tsc --noEmit",
+    "api": "tsx app/src/server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.3.0",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2",
+    "wait-on": "^9.1.0"
+  },
+  "dependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/express": "^5.0.6",
+    "better-sqlite3": "^13.0.3",
+    "express": "^5.2.1"
+  }
+}

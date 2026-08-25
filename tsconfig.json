@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "node16",
+    "moduleResolution": "node16",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node", "@playwright/test"],
+    "noEmit": true
+  },
+  "include": [
+    "tests/**/*.ts",
+    "pages/**/*.ts",
+    "api/**/*.ts",
+    "fixtures/**/*.ts",
+    "utils/**/*.ts",
+    "ai/**/*.ts"
+  ]
+}
