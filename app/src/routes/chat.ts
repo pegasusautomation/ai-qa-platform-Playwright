@@ -1,25 +1,32 @@
 import { Router } from 'express';
-import { generateAIResponse } from '../services/aiService';
+import { AIService } from '../services/AIService';
+import { DemoLLMClient } from '../services/llm/DemoLLMClient';
 
 const router = Router();
 
-router.post('/chat', (req, res) => {
-  const { question } = req.body;
+const llmClient = new DemoLLMClient();
+const aiService = new AIService(llmClient);
 
-  if (!question || typeof question !== 'string') {
+router.post('/chat', async (req, res) => {
+  try {
+    const { question } = req.body;
+
+    const result = await aiService.ask(question);
+
+    return res.json({
+      success: true,
+      ...result
+    });
+
+  } catch (error) {
     return res.status(400).json({
       success: false,
-      message: 'Question is required'
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Unable to process request'
     });
   }
-
-  const result = generateAIResponse(question);
-
-  return res.json({
-    success: true,
-    question,
-    answer: result.answer
-  });
 });
 
 export default router;
