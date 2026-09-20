@@ -2,12 +2,13 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "ai-qa-platform:${BUILD_NUMBER}"
-        NETWORK_NAME = "ai-qa-network-${BUILD_NUMBER}"
-        APP_NAME = "ai-qa-app-${BUILD_NUMBER}"
-        BASE_URL = "http://ai-qa-app-${BUILD_NUMBER}:3000"
-        LLM_PROVIDER = "demo"
-    }
+    IMAGE_NAME = "ai-qa-platform:${BUILD_NUMBER}"
+    NETWORK_NAME = "ai-qa-network-${BUILD_NUMBER}"
+    APP_NAME = "ai-qa-app-${BUILD_NUMBER}"
+    BASE_URL = "http://ai-qa-app-${BUILD_NUMBER}:3000"
+    LLM_PROVIDER = "demo"
+    CI = "true"
+}
 
     stages {
 
@@ -73,20 +74,19 @@ pipeline {
     }
 }
 
-        stage('Playwright Tests') {
-            steps {
-                sh """
-                    docker run --rm \
-                      --network ${NETWORK_NAME} \
-                      -e BASE_URL=${BASE_URL} \
-                      -e LLM_PROVIDER=${LLM_PROVIDER} \
-                      -v "\$WORKSPACE/playwright-report:/app/playwright-report" \
-                      -v "\$WORKSPACE/test-results:/app/test-results" \
-                      ${IMAGE_NAME} \
-                      npm test
-                """
-            }
-        }
+       stage('Playwright Tests') {
+    steps {
+        sh """
+            docker run --rm \
+              --network ${NETWORK_NAME} \
+              -e BASE_URL=${BASE_URL} \
+              -e LLM_PROVIDER=${LLM_PROVIDER} \
+              -e CI=true \
+              -v "\$WORKSPACE/playwright-report:/app/playwright-report" \
+              -v "\$WORKSPACE/test-results:/app/test-results" \
+              ${IMAGE_NAME} \
+              npm test
+        """
     }
 
     post {
