@@ -42,28 +42,34 @@ pipeline {
         }
 
         stage('Health Check') {
-            steps {
-                sh """
-                    for i in \$(seq 1 30); do
+    steps {
+        sh """
+            echo "Waiting for application..."
 
-                      docker run --rm \
-                        --network ${NETWORK_NAME} \
-                        ${IMAGE_NAME} \
-                        node -e "fetch('${BASE_URL}/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+            for i in \$(seq 1 30); do
+                if docker run --rm \
+                    --network ${NETWORK_NAME} \
+                    ${IMAGE_NAME} \
+                    node -e "fetch('${BASE_URL}/health').then(async r => { console.log('HTTP:', r.status); process.exit(r.ok ? 0 : 1); }).catch(err => { console.error(err.message); process.exit(1); })"
+                then
+                    echo "Application is healthy"
+                    exit 0
+                fi
 
-                      if [ \$? -eq 0 ]; then
-                        echo "Application is healthy"
-                        exit 0
-                      fi
+                echo "Health check attempt \$i failed"
+                sleep 1
+            done
 
-                      sleep 1
-                    done
+            echo "Application container logs:"
+            docker logs ${APP_NAME} || true
 
-                    echo "Application failed health check"
-                    exit 1
-                """
-            }
-        }
+            echo "Application container status:"
+            docker inspect ${APP_NAME} --format '{{.State.Status}} exit={{.State.ExitCode}}' || true
+
+            exit 1
+        """
+    }
+}
 
         stage('Playwright Tests') {
             steps {
