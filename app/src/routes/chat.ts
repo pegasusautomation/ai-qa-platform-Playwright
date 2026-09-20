@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { AIService } from '../services/AIService';
-import { DemoLLMClient } from '../services/llm/DemoLLMClient';
+import { createLLMClient  } from '../services/llm/LLMFactory';
 
 const router = Router();
 
-const llmClient = new DemoLLMClient();
+const llmClient = createLLMClient();
 const aiService = new AIService(llmClient);
 
 router.post('/chat', async (req, res) => {
